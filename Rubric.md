@@ -5,6 +5,20 @@
 
 ---
 
+## Ghi chú áp dụng cho bản hoàn thiện
+
+Thang điểm **30 + 20 + 30 + 20 không thay đổi**. Bộ giảng viên có 15 tests gốc trong `tests/`,
+giữ nguyên. `pytest.ini` đặt `testpaths = tests`, nên `pytest -q` chạy đúng 15 tests gốc.
+Bản này có thêm 19 checks mở rộng và 16 tests bonus trong `checks/`; `pytest -q tests checks` chạy đủ 50 tests,
+hoặc `pytest -q checks` để kiểm tra riêng các phần mở rộng.
+Bằng chứng: [report](outputs/report.md), [writeup](outputs/writeup.md), [đối chiếu](REQUIREMENTS.md).
+
+Phân biệt kế hoạch 30 ngày có pool reserved hiện hữu và actual-days mua cam kết mới.
+Kiểm tra đủ 24h/ngày cam kết, tránh cộng trùng idle/right-sizing/purchasing, denominator token phù hợp,
+phí ghi cache, giả định dữ liệu chưa có và savings có điều kiện khi chưa benchmark.
+Vùng sạch nhất và điện rẻ nhất là hai tiêu chí khác nhau. CSV không có reads/prefix IDs:
+không yêu cầu bịa số reads thực tế. Reasoning đã dưới cap 10% thì savings bằng 0.
+
 ## Tổng quan thang điểm
 
 | Thành phần | Điểm tối đa | Ghi chú |
@@ -79,9 +93,9 @@ pytest -q
 | File test | Tests | Kiểm tra gì |
 |---|---|---|
 | `test_metrics.py` | `test_mfu_basic`, `test_mbu_and_roofline`, `test_flag_util_lies`, `test_idle_waste` | Tính đúng MFU/MBU, phát hiện lies, tính lãng phí |
-| `test_pricing.py` | `test_request_cost`, `test_dollars_per_million`, `test_discount_stack`, `test_break_even`, `test_recommend_tier` | Công thức chi phí, chiết khấu, tier selection |
-| `test_allocation.py` | `test_cost_by_tag`, `test_tag_coverage`, `test_chargeback_ready`, `test_to_focus_rows` | Phân bổ chi phí và FOCUS export |
-| `test_report.py` | `test_build_report` | Tạo báo cáo Markdown đúng format |
+| `test_pricing.py` | `test_discount_stack_is_multiplicative`, `test_break_even`, `test_recommend_tier`, `test_request_cost_and_cache`, `test_spot_checkpoint_saves` | Công thức chi phí, chiết khấu, tier selection |
+| `test_allocation.py` | `test_cost_by_tag`, `test_tag_coverage_and_gate`, `test_focus_rows` | Phân bổ chi phí và FOCUS export |
+| `test_report.py` | `test_build_report_has_savings` | Tạo báo cáo Markdown đúng format |
 | `test_data_and_missions.py` | Integration tests M1–M5 | End-to-end pipeline hoạt động |
 
 > **Lưu ý:** Sinh viên **không được sửa file test**. Nếu phát hiện test bị sửa để hardcode kết quả, trừ toàn bộ điểm phần B.
@@ -166,7 +180,7 @@ Sinh viên chọn **ít nhất 2** trong 5 extensions. Mỗi extension tối đa
 
 **Kỳ vọng tối thiểu (7–8 điểm):**
 - Tính `$/GB-VRAM` cho các GPU trong catalog
-- Với GPU memory-bound (MBU thấp), in ra GPU thay thế rẻ hơn và % savings
+- Với workload infer/decode giả định memory-bound, kiểm tra VRAM/BW, in GPU thay thế rẻ hơn và savings; MBU thấp chưa chứng minh roofline regime
 
 **Kỳ vọng xuất sắc (9–10 điểm):**
 - Bảng so sánh: GPU hiện tại vs. GPU đề xuất, với lý do chọn dựa trên `peak_bw_tbs` và `$/GB-VRAM`
@@ -184,7 +198,7 @@ Sinh viên chọn **ít nhất 2** trong 5 extensions. Mỗi extension tối đa
 
 **Kỳ vọng xuất sắc (9–10 điểm):**
 - Tính break-even số lần đọc cho từng model tier (nhỏ vs. lớn)
-- So sánh với `avg_cache_reads` thực tế trong `token_usage.csv`
+- CSV không có `avg_cache_reads`/prefix IDs: ghi giả định reads và phí ghi, kiểm tra case ít/nhiều reads; không gọi giả định là số quan sát
 - Có test đơn vị cho `cache_is_worth_it()`
 
 **Câu hỏi chấm điểm:** "Cần đọc lại bao nhiêu lần để cache có lợi? Dataset của chúng ta có đạt ngưỡng này không?"
@@ -199,7 +213,7 @@ Sinh viên chọn **ít nhất 2** trong 5 extensions. Mỗi extension tối đa
 
 **Kỳ vọng xuất sắc (9–10 điểm):**
 - Đề xuất routing rule cụ thể (ví dụ: "chỉ dùng reasoning khi độ phức tạp task > X")
-- Ước lượng: nếu cap reasoning xuống 10% traffic thay vì hiện tại, tiết kiệm bao nhiêu `$` và `Wh`
+- Ước lượng: nếu cap reasoning xuống 10% traffic, tiết kiệm bao nhiêu `$` và `Wh`; dưới cap ghi 0; nếu đổi tokens/model, ghi rõ
 
 **Câu hỏi chấm điểm:** "Reasoning traffic chiếm bao nhiêu % tổng? Tại sao nó lại tốn năng lượng ~80× nhiều hơn?"
 
@@ -212,7 +226,7 @@ Sinh viên chọn **ít nhất 2** trong 5 extensions. Mỗi extension tối đa
 - In ra tổng gCO2e tiết kiệm nếu chuyển toàn bộ sang vùng sạch nhất
 
 **Kỳ vọng xuất sắc (9–10 điểm):**
-- Bảng so sánh tất cả 5 vùng: `$/kWh`, `gCO2/kWh`, chi phí điện thực tế, carbon thực tế
+- Bảng so sánh tất cả 5 vùng: `$/kWh`, `gCO2/kWh`, chi phí điện và carbon ước tính; ghi rõ rated watts, actual days hay 30 ngày
 - Đề xuất vùng tối ưu theo từng tiêu chí (rẻ nhất `$`, sạch nhất `CO2`, cân bằng nhất)
 - Có nhận xét về trade-off latency (vùng sạch nhất có thể xa users nhất)
 

@@ -1,0 +1,14 @@
+{
+  "backend": "mock",
+  "period": "process session",
+  "blocked": true,
+  "requests_logged": 15,
+  "budgets_usd": {
+    "team-chat": 0.05,
+    "team-eval": 100.0
+  },
+  "spend_usd": {
+    "team-chat": 0.04604999999999999,
+    "team-eval": 0.0002595
+  }
+}

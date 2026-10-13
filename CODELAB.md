@@ -5,7 +5,7 @@ description: "Đóng vai FinOps Engineer tại NimbusAI: phân tích telemetry G
 author: "VinUni Codelab" # Tác giả
 duration: 240 # 4 tiếng (240 phút)
 category: "Infrastructure & FinOps" # Nhóm nội dung
-updated: "2026-08-27" # Tự điền ngày hiện tại (YYYY-MM-DD)
+updated: "2026-10-13" # Tự điền ngày hiện tại (YYYY-MM-DD)
 day: "25" # Day của cohort
 sequence: 1 # Thứ tự hiển thị trong cùng Day (số nhỏ hơn hiện trước)
 keywords: ["GPU", "FinOps", "Cost Optimization", "LLM Inference", "MFU", "FOCUS", "Sustainability"] # Ví dụ: ["AI", "API"]
@@ -25,7 +25,7 @@ overview: # Tùy chọn; điền đủ các phần dưới để hiện Bản đ
     - "Đọc dữ liệu telemetry/giá/token → phát hiện GPU-Util lie và lãng phí idle (M1)"
     - "Tính chi phí request và áp dụng cascade + cache + batch để giảm $/1M-token (M2)"
     - "Chọn tier mua GPU theo duty cycle và khả năng gián đoạn (M3)"
-    - "Gắn tag và phân bổ chi phí theo team, xuất dữ liệu chuẩn FOCUS (M4)"
+    - "Gắn tag và phân bổ chi phí theo team, xuất dữ liệu FOCUS-style (M4)"
     - "Tổng hợp baseline vs. optimized thành báo cáo kèm biểu đồ waterfall và phần sustainability (M5)"
   phases:
     - time: "30 phút"
@@ -43,14 +43,18 @@ overview: # Tùy chọn; điền đủ các phần dưới để hiện Bản đ
     - time: "30 phút"
       owner: "Học viên"
       title: "Kiểm tra & chuẩn bị nộp bài"
-      description: "Chạy verify.py (11/11) và pytest (15 passed), viết write-up ngắn, đóng gói outputs/ để nộp."
+      description: "Chạy verify.py (11/11), pytest -q (15 tests gốc) và pytest -q tests checks (50 tests tổng cộng), viết write-up ngắn, đóng gói outputs/ để nộp."
   outcomes:
-    - "Chạy được toàn bộ pipeline FinOps thuần Python và đạt verify.py 11/11 + pytest 15/15"
+    - "Chạy được pipeline FinOps thuần Python, verify.py 11/11; pytest -q đạt 15/15 tests gốc, chạy cả tests checks đạt 50/50"
     - "Giải thích được vì sao GPU-Util cao không đồng nghĩa hiệu quả tính toán cao (MFU thấp)"
     - "Tạo được báo cáo baseline vs. optimized theo $/1M-token với breakdown từng đòn bẩy tiết kiệm"
     - "Triển khai và đo lường được ít nhất 2 phần mở rộng nâng cao"
   reassurance: "Lab chạy hoàn toàn trên laptop, không cần GPU thật, không cần tài khoản cloud hay API key — mọi dữ liệu đều được sinh tất định (seed=25) nên kết quả luôn tái lập được."
 ---
+
+> Bản hoàn thiện theo [đề bổ sung](Practice.md): **5/5 extension**, bảng trước/sau, giả định rõ ràng.
+> Xem [report](outputs/report.md), [bài viết](outputs/writeup.md), [đối chiếu yêu cầu](REQUIREMENTS.md).
+> Baseline trước sửa và SHA-256 lưu trong `outputs/before/`; kết quả mới trong `outputs/after.json`.
 
 ## 1. Thuật ngữ cần biết
 
@@ -65,7 +69,7 @@ overview: # Tùy chọn; điền đủ các phần dưới để hiện Bản đ
 | `Batch API` | Gộp các request không cần phản hồi real-time để hưởng chiết khấu 50% | Cột `is_batch=1` trong dữ liệu token đánh dấu các request đủ điều kiện |
 | `Break-even utilization` | Mức sử dụng tối thiểu để reserved instance có lợi hơn on-demand: `1 - discount` | Với chiết khấu reserved 45% → cần duty cycle ≥ 55% (~13.2 giờ/ngày) mới nên mua reserved |
 | `Showback / Chargeback` | Showback = hiển thị chi phí theo team để nhận thức; Chargeback = thực sự thu tiền, chỉ làm được khi tag coverage ≥ 80% | M4 kiểm tra `tag_coverage` trước khi bật "chargeback ready" |
-| `FOCUS` | Chuẩn dữ liệu chi phí cloud mở, đa nhà cung cấp (FinOps Foundation) | M4 xuất `outputs/focus_export.csv` theo đúng schema FOCUS (`BilledCost`, `ServiceCategory`, ...) |
+| `FOCUS` | Chuẩn dữ liệu chi phí cloud mở, đa nhà cung cấp (FinOps Foundation) | M4 xuất `outputs/focus_export.csv` theo tập cột FOCUS-style của lab, chưa xác nhận tuân thủ toàn bộ schema (`BilledCost`, `ServiceCategory`, ...) |
 | `Roofline model` | Mô hình xác định workload bị giới hạn bởi compute hay bởi bandwidth, dựa trên arithmetic intensity so với ridge point của GPU | LLM prefill (~455 FLOP/byte) là compute-bound; LLM decode (~1–2 FLOP/byte) là memory-bound trên H100 |
 
 ## 2. Mục tiêu & đầu ra
@@ -73,8 +77,8 @@ overview: # Tùy chọn; điền đủ các phần dưới để hiện Bản đ
 Bạn hoàn thành khi:
 
 - `python verify.py` báo **11/11 checks passed**.
-- `pytest -q` báo **15 passed**.
-- Thư mục `outputs/` có đủ `report.md`, `savings.png`, `focus_export.csv`, thể hiện rõ chi phí baseline vs. optimized theo `$/1M-token` với breakdown từng đòn bẩy.
+- `pytest -q` báo **15 passed** cho bộ gốc; `pytest -q tests checks` báo **50 passed** cho cả bộ gốc và checks mở rộng.
+- Thư mục `outputs/` có đủ `report.md`, `savings.png`, `focus_export.csv`, `writeup.md`, thể hiện rõ chi phí baseline vs. optimized theo `$/1M-token` với breakdown từng đòn bẩy.
 - Bạn đã triển khai và đo lường được **ít nhất 2 trong 5** phần mở rộng "Your Turn" (xem mục 4.3).
 - Bạn nộp kèm một bài viết ngắn (1–2 trang) phân tích kết quả theo yêu cầu ở mục 6.
 
@@ -86,7 +90,7 @@ Bạn hoàn thành khi:
 - Thư viện Python cần thiết (cài qua `requirements.txt`): `pandas>=2.0`, `matplotlib>=3.7`, `pytest>=7.4`.
 
 ```bash
-cd Day25-Track2-GPU-FinOps-Lab
+# Mở terminal tại thư mục gốc project (có requirements.txt)
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -103,7 +107,7 @@ python data/generate.py   # sinh 4 file CSV trong data/, seed cố định = 25
 
 Đọc nhanh 4 file: `price_catalog.csv` (giá 7 loại GPU), `gpu_telemetry.csv` (11 GPU × 24 giờ), `token_usage.csv` (2,400 request LLM), `workloads.csv` (8 job training/inference). Chi tiết cột và ví dụ code đọc từng file có trong [Guide.md](Guide.md#3-khám-phá-dữ-liệu-đầu-vào).
 
-**Kết quả mong đợi:** 4 file `.csv` xuất hiện trong `data/`, đọc bằng `pandas.read_csv` không lỗi.
+**Kết quả mong đợi:** 4 file `.csv` đọc được bằng pandas; dùng seed=25 và cùng dữ liệu cho mọi bảng trước/sau. Report ghi checksums xác nhận bốn CSV trùng baseline.
 
 ### 4.2 Chạy 5 Mission
 
@@ -125,22 +129,28 @@ python missions/run_all.py
 
 ### 4.3 Phần mở rộng "Your Turn" (chọn ≥ 2/5)
 
-Lab vẫn pass mà không cần làm phần này, nhưng đây là nơi học sâu nhất và chiếm 20% điểm rubric:
+Đề yêu cầu **ít nhất hai** phần, chiếm 20% rubric. Bản này hoàn thiện cả năm; mỗi phần có code chạy được, bảng trước/sau và insight. Trước sửa đã lưu các kết quả mission liên quan trong `outputs/before/`. Sau sửa chạy lại trên cùng dữ liệu:
 
-1. **Cải thiện `recommend_tier()`** (`finops/pricing.py`) — thêm interruption rate theo GPU type, so sánh 1yr vs 3yr reserved.
-2. **Right-sizing theo MBU** (`missions/m1_efficiency_audit.py`) — dùng `$/GB-VRAM` và `peak_bw_tbs` để đề xuất GPU phù hợp hơn cho workload memory-bound.
-3. **`cache_is_worth_it()`** (`finops/pricing.py` + `missions/m2_inference_levers.py`) — chỉ tính savings từ cache khi số lần đọc đủ bù chi phí ghi.
-4. **Ngân sách Reasoning** (`missions/m2_inference_levers.py`, `missions/m5_report.py`) — tách chi phí `$`/`Wh` cho traffic `is_reasoning=1` và đề xuất quy tắc routing.
-5. **Carbon-aware Scheduling** (`missions/m3_purchasing.py` hoặc file mới) — di chuyển job interruptible sang vùng rẻ + sạch nhất, báo cáo carbon tiết kiệm được.
+1. **Cải thiện `recommend_tier()`** (`finops/pricing.py`) — interruption theo GPU type (giả định), so total cost on-demand/spot/reserved 1yr/3yr theo `days`, tính cả giờ/ngày cam kết chưa dùng. Bảng job → tier → chi phí cũ/mới, savings và lý do đổi tier trong report.
+2. **Right-sizing theo MBU** (`missions/m1_efficiency_audit.py`) — dùng `$/GB-h`, bandwidth và VRAM cần (max observed × 1.10), target MFU/MBU 80%. Bảng GPU hiện tại → đề xuất → lý do → USD/30 ngày. Throughput chưa có benchmark, savings ghi có điều kiện.
+3. **`cache_is_worth_it()`** (`finops/pricing.py` + `missions/m2_inference_levers.py`) — gọi trước áp dụng cache; chỉ bật khi reads đủ bù writes. CSV thiếu prefix IDs/reads: giả định 4 reads/write và phí ghi thêm 1.25× input price. Report có ngưỡng hòa vốn và cost/$/1M trước/sau, case 0.5/1/4/20 reads.
+4. **Ngân sách Reasoning** (`missions/m2_inference_levers.py`, `missions/m5_report.py`) — tách request/token/USD/Wh và tỷ trọng cho is_reasoning=1/0, dùng `wh_per_query`, thử cap 10%. Traffic seed=25 dưới cap nên savings=0; counterfactual giữ tokens/model và chỉ bỏ multiplier energy khi overflow.
+5. **Carbon-aware Scheduling** (`missions/m3_purchasing.py` hoặc file mới) — job interruptible=1, Wh = watts × GPU-hours theo days thực tế, giữ cùng workload. So us-east-1 với năm vùng; báo cáo carbon từng job/tổng, giá điện, vùng rẻ nhất/sạch nhất/cân bằng và giới hạn latency.
 
 Chi tiết yêu cầu và code mẫu cho từng extension nằm trong [Guide.md, mục 10](Guide.md#10-phần-mở-rộng-your-turn); tiêu chí chấm chi tiết nằm trong [Rubric.md, mục D](Rubric.md).
+
+Kế hoạch chính 30 ngày dùng pool reserved hiện hữu và tính 24h/ngày. Extension mua mới dùng days thực tế
+và toàn bộ nghĩa vụ 365/1095 ngày, không so trực tiếp tổng hai kỳ. M5 tính savings tuần tự sau purchasing,
+idle trước resize, không ghi idle savings cho reserved. Ánh xạ GPU → job là giả định cần xác nhận.
+Chỉ cộng API và GPU spend nếu là hai danh mục chi riêng; không quy training spend theo token API.
 
 ## 5. Kiểm tra kết quả
 
 ```bash
 python verify.py   # phải đạt 11/11 checks passed
-pytest -q          # phải đạt 15 passed
-cat outputs/report.md
+pytest -q           # 15 passed (tests gốc)
+pytest -q tests checks # 50 passed (15 gốc + 19 checks mở rộng + 16 bonus)
+cat outputs/report.md # PowerShell: Get-Content outputs/report.md -Encoding UTF8
 ```
 
 **Lỗi thường gặp** (xem đầy đủ tại [Guide.md, mục 12](Guide.md#12-các-lỗi-thường-gặp)):
@@ -149,7 +159,7 @@ cat outputs/report.md
 - `FileNotFoundError: data/gpu_telemetry.csv` → chưa chạy `python data/generate.py`.
 - `verify.py` fail ở "M2 savings out of band" → kiểm tra `request_cost()` trong `finops/pricing.py` có áp đúng `cache_discount=0.10` và `batch_discount=0.50`.
 - `pytest` fail `test_flag_util_lies` → nhớ chia `gpu_util_pct` cho 100 trước khi so sánh ngưỡng `>= 0.90`.
-- Không có `savings.png` → lab vẫn pass nếu thiếu matplotlib, nhưng nên `pip show matplotlib` để kiểm tra lại.
+- Không có `savings.png` → cần cài matplotlib để nộp đủ artifact và pass checks mở rộng; verify cơ bản chưa kiểm tra PNG.
 
 **Lưu ý:** không được sửa file trong `tests/` — nếu phát hiện test bị sửa để hardcode kết quả, toàn bộ điểm phần B (unit tests) sẽ bị trừ (xem [Rubric.md](Rubric.md)).
 
@@ -161,8 +171,11 @@ Nộp các file sau (đúng theo [Rubric.md](Rubric.md)):
 outputs/report.md
 outputs/savings.png
 outputs/focus_export.csv
-[bài viết ngắn 1–2 trang — .md hoặc .pdf]
+outputs/writeup.md
 ```
+
+Có thể kèm `outputs/after.json`, `outputs/before/` và `outputs/validation.txt` làm bằng chứng trước/sau;
+bốn file trong danh sách trên là các file nộp bắt buộc.
 
 Bài viết ngắn cần trả lời:
 
@@ -176,7 +189,8 @@ Checklist trước khi nộp:
 
 ```
 [ ] python verify.py  →  11/11 checks passed
-[ ] pytest -q         →  15 passed
+[ ] pytest -q → 15 passed (tests gốc)
+[ ] pytest -q tests checks → 50 passed (15 gốc + 19 mở rộng + 16 bonus)
 [ ] outputs/report.md tồn tại và có đủ section (baseline/optimized, breakdown lever, sustainability)
 [ ] outputs/savings.png tồn tại
 [ ] outputs/focus_export.csv tồn tại
@@ -184,3 +198,13 @@ Checklist trước khi nộp:
 ```
 
 Bài lab được dùng làm **đầu vào cho Milestone 2** — mang báo cáo đến buổi demo platform. Repo gốc của bài lab: [VinUni-AI20k/Day25-Track2-GpuFinOps](https://github.com/VinUni-AI20k/Day25-Track2-GpuFinOps).
+
+## 7. Bonus đã triển khai (không tính vào rubric)
+
+Cả tracker mock, benchmark CPU và Prometheus/Grafana đều có hướng dẫn tại `bonus/`.
+[Report bonus](outputs/bonus/report.md) và [validation.json](outputs/bonus/validation.json)
+ghi kết quả riêng; không cộng chi phí này vào M1–M5.
+Chạy `pytest -q checks/test_bonus.py` để kiểm tra 16 tests bonus;
+`pytest -q tests checks` chạy đủ 50 tests, trong khi `pytest -q` vẫn chỉ 15 tests gốc.
+Docker/model kiểm tra thực bằng `python bonus/verify.py --docker --model` sau khi khởi động stack
+và chạy benchmark theo hướng dẫn. Bonus không yêu cầu API key và không làm thay đổi bốn file nộp bắt buộc.

@@ -46,7 +46,7 @@ def to_focus_rows(rows, period_start: str = "2026-06-01", billing_account: str =
             "ServiceCategory": "AI and Machine Learning",
             "ServiceName": r.get("service", "gpu-inference"),
             "ResourceId": r.get("resource_id", r.get("gpu_id", "")),
-            "BilledCost": round(float(r.get("cost", 0.0)), 4),
+            "BilledCost": float(r.get("cost", 0.0)),
             "BillingCurrency": "USD",
             "Tags": {"team": r.get("team", ""), "project": r.get("project", "")},
         })

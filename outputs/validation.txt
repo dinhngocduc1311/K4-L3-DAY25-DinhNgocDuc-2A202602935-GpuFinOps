@@ -1,0 +1,61 @@
+Last complete recheck: 2026-10-13 (Asia/Bangkok)
+No commit/push performed.
+
+> python verify.py
+Generated: price_catalog.csv, gpu_telemetry.csv, token_usage.csv, workloads.csv
+
+============================================================
+  LAB 25 VERIFY
+============================================================
+  [PASS] M1 flags the GPU-Util lie (gpu-h100-4)  (['gpu-h100-4', 'gpu-a10g-1'])
+  [PASS] M1 detects idle waste  ($20.0/day)
+  [PASS] M2 $/1M-token drops after optimization  (6.487984312282441 -> 1.181471750333562)
+  [PASS] M2 inference savings in 60-95% band  (81.8%)
+  [PASS] M3 recommends a spot tier  ({'spot', 'reserved'})
+  [PASS] M3 recommends a reserved tier  ({'spot', 'reserved'})
+  [PASS] M3 purchasing saves money  (38.0%)
+  [PASS] M4 tag coverage 85-100%  (92%)
+  [PASS] M4 chargeback gate is open  (True)
+  [PASS] M5 total savings in 40-95% band  (43.4%)
+  [PASS] M5 report.md written
+------------------------------------------------------------
+  11/11 checks passed
+============================================================
+
+> pytest -q
+...............                                                          [100%]
+15 passed in 1.63s
+
+> .venv/Scripts/python.exe -m pytest -q tests checks
+50 passed in 3.44s
+
+> python bonus/verify.py --docker --model
+BLOCKED after 10 chat requests: key=team-chat would spend $0.050655 > cap $0.050000
+per-key spend: {'team-chat': 0.04605, 'team-eval': 0.00026}
+requests logged: 15
+Written: outputs/bonus/tracker_requests.csv + tracker_summary.json
+Bonus validation passed: tracker, exporter, docker, model
+Written: outputs/bonus/validation.json + report.md + prometheus_metrics.txt
+
+> Docker and Prometheus
+All 3 containers healthy; Prometheus config passes promtool.
+Live exporter metrics pass promtool, use seconds and LF.
+Exporter target UP; Grafana datasource health OK; dashboard has 9 panels.
+
+> Requirement and artifact audit
+Audited project Markdown: 15
+Core missions M1-M5: output values reconcile; all 5 extensions measured
+Graded submission: 4 files; 5 writeup sections; 767 words
+Bonus: tracker verified, CPU actual completed benchmark, Docker live verified
+Telemetry/price/token/workload hashes match original baseline
+CSV: 2400 rows and cost matches M2/M4; PNG decodes
+UTF-8/local file links OK; tests/ unchanged; diff check passed
+Conclusion: no missing requirement identified for the specified simulated lab and 3 bonuses
+
+Evidence: outputs/bonus/local_benchmark.json records an actual completed CPU run (3 timed runs, 192 output tokens).
+Bonus verifier revalidates this saved measurement and current live Docker; it does not rerun CPU generation.
+Known limits permitted/documented by the lab: synthetic GPU telemetry, hypothetical purchasing/right-sizing assignments,
+assumed cache reads/write fees and energy/carbon rates; no GPU throughput or routing-quality benchmarks.
+CPU throughput is measured; CPU rental rate is assumed; tracker backend is mock.
+Model cache/dependencies are ignored by Git. The graded 4 files and original instructor tests remain intact.
+Stack remains available on localhost for demo; stop with docker compose -f bonus/docker/docker-compose.yml down.

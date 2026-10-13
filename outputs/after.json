@@ -1,0 +1,738 @@
+{
+  "data_sha256": {
+    "gpu_telemetry.csv": "0e2351c932b182991b95e4ea12c180addd18b84eba1942d2cce107134a0a145d",
+    "price_catalog.csv": "64783180a4aed0635cb370895e32e0434f67ccd8e7aa7d0c63a0b6fd2b7b5476",
+    "token_usage.csv": "9e6c5657f2689aeb4d0ce9a572ada153cea89c69587b77afe96fd5e3f2bc94a9",
+    "workloads.csv": "e183fea3b26667b5efb444241ec8ea248c6f883b62eef2607ebe637649583967"
+  },
+  "m1": {
+    "summary": [
+      {
+        "gpu_id": "gpu-h100-0",
+        "gpu_type": "H100",
+        "gpu_util_pct": 94.4,
+        "mfu": 0.417,
+        "mbu": 0.446,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "train",
+        "max_mem_gb": 67.5,
+        "max_bw_tbs": 1.749,
+        "max_tflops": 442.6
+      },
+      {
+        "gpu_id": "gpu-h100-1",
+        "gpu_type": "H100",
+        "gpu_util_pct": 95.2,
+        "mfu": 0.408,
+        "mbu": 0.44,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "train",
+        "max_mem_gb": 67.5,
+        "max_bw_tbs": 1.777,
+        "max_tflops": 434.7
+      },
+      {
+        "gpu_id": "gpu-h100-2",
+        "gpu_type": "H100",
+        "gpu_util_pct": 94.3,
+        "mfu": 0.401,
+        "mbu": 0.423,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "train",
+        "max_mem_gb": 67.2,
+        "max_bw_tbs": 1.752,
+        "max_tflops": 422.3
+      },
+      {
+        "gpu_id": "gpu-h100-3",
+        "gpu_type": "H100",
+        "gpu_util_pct": 93.1,
+        "mfu": 0.427,
+        "mbu": 0.444,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "train",
+        "max_mem_gb": 67.5,
+        "max_bw_tbs": 1.745,
+        "max_tflops": 450.1
+      },
+      {
+        "gpu_id": "gpu-h100-4",
+        "gpu_type": "H100",
+        "gpu_util_pct": 98.2,
+        "mfu": 0.194,
+        "mbu": 0.207,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "train",
+        "max_mem_gb": 67.0,
+        "max_bw_tbs": 0.908,
+        "max_tflops": 225.5
+      },
+      {
+        "gpu_id": "gpu-h100-5",
+        "gpu_type": "H100",
+        "gpu_util_pct": 61.1,
+        "mfu": 0.261,
+        "mbu": 0.271,
+        "idle_hours": 8,
+        "sample_hours": 24,
+        "workload": "train",
+        "max_mem_gb": 66.3,
+        "max_bw_tbs": 1.538,
+        "max_tflops": 404.0
+      },
+      {
+        "gpu_id": "gpu-a100-0",
+        "gpu_type": "A100",
+        "gpu_util_pct": 31.4,
+        "mfu": 0.259,
+        "mbu": 0.276,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "infer",
+        "max_mem_gb": 67.7,
+        "max_bw_tbs": 0.707,
+        "max_tflops": 89.6
+      },
+      {
+        "gpu_id": "gpu-a100-1",
+        "gpu_type": "A100",
+        "gpu_util_pct": 28.0,
+        "mfu": 0.236,
+        "mbu": 0.247,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "infer",
+        "max_mem_gb": 67.0,
+        "max_bw_tbs": 0.677,
+        "max_tflops": 82.6
+      },
+      {
+        "gpu_id": "gpu-a10g-0",
+        "gpu_type": "A10G",
+        "gpu_util_pct": 25.0,
+        "mfu": 0.219,
+        "mbu": 0.235,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "infer",
+        "max_mem_gb": 20.3,
+        "max_bw_tbs": 0.182,
+        "max_tflops": 31.2
+      },
+      {
+        "gpu_id": "gpu-a10g-1",
+        "gpu_type": "A10G",
+        "gpu_util_pct": 96.9,
+        "mfu": 0.268,
+        "mbu": 0.302,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "infer",
+        "max_mem_gb": 20.4,
+        "max_bw_tbs": 0.212,
+        "max_tflops": 37.4
+      },
+      {
+        "gpu_id": "gpu-l4-0",
+        "gpu_type": "L4",
+        "gpu_util_pct": 40.0,
+        "mfu": 0.302,
+        "mbu": 0.328,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "embed",
+        "max_mem_gb": 20.2,
+        "max_bw_tbs": 0.118,
+        "max_tflops": 39.8
+      }
+    ],
+    "lies": [
+      {
+        "gpu_id": "gpu-h100-4",
+        "gpu_type": "H100",
+        "gpu_util_pct": 98.2,
+        "mfu": 0.194,
+        "mbu": 0.207,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "train",
+        "max_mem_gb": 67.0,
+        "max_bw_tbs": 0.908,
+        "max_tflops": 225.5
+      },
+      {
+        "gpu_id": "gpu-a10g-1",
+        "gpu_type": "A10G",
+        "gpu_util_pct": 96.9,
+        "mfu": 0.268,
+        "mbu": 0.302,
+        "idle_hours": 0,
+        "sample_hours": 24,
+        "workload": "infer",
+        "max_mem_gb": 20.4,
+        "max_bw_tbs": 0.212,
+        "max_tflops": 37.4
+      }
+    ],
+    "idle_waste_daily": 20.0,
+    "fleet_daily": 513.12,
+    "right_sizing": [
+      {
+        "gpu_id": "gpu-a100-0",
+        "workload": "infer",
+        "current_gpu": "A100",
+        "proposed_gpu": "A100",
+        "required_mem_gb": 74.47000000000001,
+        "current_usd_per_gb": 0.022375,
+        "proposed_usd_per_gb": 0.022375,
+        "monthly_savings": 0.0,
+        "reason": "No cheaper GPU passes VRAM, bandwidth and compute capacity screens; VRAM >= 74.47 GB; BW >= 0.884 TB/s; FP16 >= 112.0 TFLOPs; 10% VRAM headroom, target MFU/MBU 80%; benchmark required"
+      },
+      {
+        "gpu_id": "gpu-a100-1",
+        "workload": "infer",
+        "current_gpu": "A100",
+        "proposed_gpu": "A100",
+        "required_mem_gb": 73.7,
+        "current_usd_per_gb": 0.022375,
+        "proposed_usd_per_gb": 0.022375,
+        "monthly_savings": 0.0,
+        "reason": "No cheaper GPU passes VRAM, bandwidth and compute capacity screens; VRAM >= 73.70 GB; BW >= 0.846 TB/s; FP16 >= 103.2 TFLOPs; 10% VRAM headroom, target MFU/MBU 80%; benchmark required"
+      },
+      {
+        "gpu_id": "gpu-a10g-0",
+        "workload": "infer",
+        "current_gpu": "A10G",
+        "proposed_gpu": "L4",
+        "required_mem_gb": 22.330000000000002,
+        "current_usd_per_gb": 0.041666666666666664,
+        "proposed_usd_per_gb": 0.03333333333333333,
+        "monthly_savings": 143.99999999999997,
+        "reason": "VRAM >= 22.33 GB; BW >= 0.227 TB/s; FP16 >= 39.0 TFLOPs; 10% VRAM headroom, target MFU/MBU 80%; benchmark required"
+      },
+      {
+        "gpu_id": "gpu-a10g-1",
+        "workload": "infer",
+        "current_gpu": "A10G",
+        "proposed_gpu": "L4",
+        "required_mem_gb": 22.44,
+        "current_usd_per_gb": 0.041666666666666664,
+        "proposed_usd_per_gb": 0.03333333333333333,
+        "monthly_savings": 143.99999999999997,
+        "reason": "VRAM >= 22.44 GB; BW >= 0.265 TB/s; FP16 >= 46.7 TFLOPs; 10% VRAM headroom, target MFU/MBU 80%; benchmark required"
+      },
+      {
+        "gpu_id": "gpu-l4-0",
+        "workload": "embed",
+        "current_gpu": "L4",
+        "proposed_gpu": "L4",
+        "required_mem_gb": 22.220000000000002,
+        "current_usd_per_gb": 0.03333333333333333,
+        "proposed_usd_per_gb": 0.03333333333333333,
+        "monthly_savings": 0.0,
+        "reason": "No cheaper GPU passes VRAM, bandwidth and compute capacity screens; VRAM >= 22.22 GB; BW >= 0.147 TB/s; FP16 >= 49.7 TFLOPs; 10% VRAM headroom, target MFU/MBU 80%; benchmark required"
+      }
+    ],
+    "lie_sizing": [
+      {
+        "gpu_id": "gpu-h100-4",
+        "workload": "train",
+        "current_gpu": "H100",
+        "proposed_gpu": "A100",
+        "required_mem_gb": 73.7,
+        "current_usd_per_gb": 0.03125,
+        "proposed_usd_per_gb": 0.022375,
+        "monthly_savings": 511.2,
+        "reason": "VRAM >= 73.70 GB; BW >= 1.135 TB/s; FP16 >= 281.9 TFLOPs; 10% VRAM headroom, target MFU/MBU 80%; benchmark required"
+      }
+    ]
+  },
+  "m2": {
+    "baseline_daily": 48.87416100000006,
+    "optimized_daily": 8.900058594999981,
+    "baseline_per_m": 6.487984312282441,
+    "optimized_per_m": 1.181471750333562,
+    "savings_pct": 81.8,
+    "total_tokens": 7533027,
+    "requests": 2400,
+    "stages": [
+      {
+        "stage": "Baseline",
+        "daily_cost": 48.87416100000006,
+        "per_m": 6.487984312282441
+      },
+      {
+        "stage": "Cascade",
+        "daily_cost": 11.475642800000013,
+        "per_m": 1.5233773621148596
+      },
+      {
+        "stage": "+ Cache incl. writes",
+        "daily_cost": 10.694623824999976,
+        "per_m": 1.4196980609521215
+      },
+      {
+        "stage": "+ Batch",
+        "daily_cost": 8.900058594999981,
+        "per_m": 1.181471750333562
+      }
+    ],
+    "cache_scenarios": [
+      {
+        "reads": 0.5,
+        "enabled_requests": 0,
+        "daily_cost": 9.658588099999994,
+        "per_m": 1.2821656022207266,
+        "write_cost": 0.0
+      },
+      {
+        "reads": 1.0,
+        "enabled_requests": 0,
+        "daily_cost": 9.658588099999994,
+        "per_m": 1.2821656022207266,
+        "write_cost": 0.0
+      },
+      {
+        "reads": 4.0,
+        "enabled_requests": 2400,
+        "daily_cost": 8.900058594999981,
+        "per_m": 1.181471750333562,
+        "write_cost": 0.415435624999999
+      },
+      {
+        "reads": 20.0,
+        "enabled_requests": 2400,
+        "daily_cost": 8.567710095,
+        "per_m": 1.1373528987749548,
+        "write_cost": 0.08308712500000012
+      }
+    ],
+    "original_optimized_daily": 8.484622969999995,
+    "write_cost_daily": 0.415435624999999,
+    "reasoning": {
+      "groups": {
+        "0": {
+          "requests": 2199,
+          "tokens": 6291871,
+          "cost": 7.495613407500002,
+          "wh": 1887.5613000000005,
+          "request_share": 0.91625,
+          "cost_share": 0.8421982088647136,
+          "energy_share": 0.0595909426009542,
+          "token_share": 0.8352380789289617
+        },
+        "1": {
+          "requests": 201,
+          "tokens": 1241156,
+          "cost": 1.4044451875000001,
+          "wh": 29787.744000000002,
+          "request_share": 0.08375,
+          "cost_share": 0.1578017911352863,
+          "energy_share": 0.9404090573990458,
+          "token_share": 0.16476192107103824
+        }
+      },
+      "cap": 0.1,
+      "changed_requests": 0,
+      "before_cost": 8.900058595000003,
+      "after_cost": 8.900058595000003,
+      "saved_usd": 0.0,
+      "before_wh": 31675.305300000004,
+      "after_wh": 31675.305300000004,
+      "saved_wh": 0,
+      "after_reasoning_requests": 201
+    }
+  },
+  "m3": {
+    "recommendations": [
+      {
+        "job_id": "job-train-llm",
+        "gpu_type": "H100",
+        "tier": "spot",
+        "num_gpus": 8,
+        "hours_per_day": 20.0,
+        "kind": "train",
+        "on_demand": 12000.0,
+        "optimized": 7560.0
+      },
+      {
+        "job_id": "job-train-embed",
+        "gpu_type": "A100",
+        "tier": "spot",
+        "num_gpus": 4,
+        "hours_per_day": 10.0,
+        "kind": "train",
+        "on_demand": 2148.0,
+        "optimized": 1399.2
+      },
+      {
+        "job_id": "job-finetune",
+        "gpu_type": "H100",
+        "tier": "spot",
+        "num_gpus": 2,
+        "hours_per_day": 6.0,
+        "kind": "train",
+        "on_demand": 900.0,
+        "optimized": 567.0
+      },
+      {
+        "job_id": "job-infer-chat",
+        "gpu_type": "A10G",
+        "tier": "reserved",
+        "num_gpus": 6,
+        "hours_per_day": 24.0,
+        "kind": "infer",
+        "on_demand": 4320.0,
+        "optimized": 2592.0
+      },
+      {
+        "job_id": "job-infer-rag",
+        "gpu_type": "A100",
+        "tier": "reserved",
+        "num_gpus": 3,
+        "hours_per_day": 24.0,
+        "kind": "infer",
+        "on_demand": 3866.4,
+        "optimized": 2160.0
+      },
+      {
+        "job_id": "job-infer-search",
+        "gpu_type": "L4",
+        "tier": "reserved",
+        "num_gpus": 4,
+        "hours_per_day": 18.0,
+        "kind": "infer",
+        "on_demand": 1728.0,
+        "optimized": 1296.0
+      },
+      {
+        "job_id": "job-dev-sandbox",
+        "gpu_type": "A10G",
+        "tier": "spot",
+        "num_gpus": 2,
+        "hours_per_day": 8.0,
+        "kind": "dev",
+        "on_demand": 480.0,
+        "optimized": 209.28000000000003
+      },
+      {
+        "job_id": "job-batch-eval",
+        "gpu_type": "H100",
+        "tier": "spot",
+        "num_gpus": 1,
+        "hours_per_day": 3.0,
+        "kind": "infer",
+        "on_demand": 225.0,
+        "optimized": 141.75
+      }
+    ],
+    "on_demand_monthly": 25667.4,
+    "optimized_monthly": 15925.230000000001,
+    "savings_pct": 38.0,
+    "actual_recommendations": [
+      {
+        "job_id": "job-train-llm",
+        "gpu_type": "H100",
+        "days": 14.0,
+        "old_tier": "spot",
+        "tier": "spot",
+        "old_estimate": 3544.8,
+        "on_demand": 5600.0,
+        "optimized": 3528.000000000001,
+        "candidate_costs": {
+          "on_demand": 5600.0,
+          "spot": 3528.000000000001,
+          "reserved_1yr": 140160.0,
+          "reserved_3yr": 294336.0
+        },
+        "interrupt_rate": 0.04,
+        "reason": "Choose least total cost including GPU-specific interruptions and checkpoint/rework"
+      },
+      {
+        "job_id": "job-train-embed",
+        "gpu_type": "A100",
+        "days": 5.0,
+        "old_tier": "spot",
+        "tier": "spot",
+        "old_estimate": 232.10000000000002,
+        "on_demand": 358.0,
+        "optimized": 233.20000000000002,
+        "candidate_costs": {
+          "on_demand": 358.0,
+          "spot": 233.20000000000002,
+          "reserved_1yr": 49056.0,
+          "reserved_3yr": 105120.0
+        },
+        "interrupt_rate": 0.06,
+        "reason": "Choose least total cost including GPU-specific interruptions and checkpoint/rework"
+      },
+      {
+        "job_id": "job-finetune",
+        "gpu_type": "H100",
+        "days": 3.0,
+        "old_tier": "spot",
+        "tier": "spot",
+        "old_estimate": 56.97,
+        "on_demand": 90.0,
+        "optimized": 56.699999999999996,
+        "candidate_costs": {
+          "on_demand": 90.0,
+          "spot": 56.699999999999996,
+          "reserved_1yr": 35040.0,
+          "reserved_3yr": 73584.0
+        },
+        "interrupt_rate": 0.04,
+        "reason": "Choose least total cost including GPU-specific interruptions and checkpoint/rework"
+      },
+      {
+        "job_id": "job-infer-chat",
+        "gpu_type": "A10G",
+        "days": 30.0,
+        "old_tier": "reserved",
+        "tier": "on_demand",
+        "old_estimate": 2592.0,
+        "on_demand": 4320.0,
+        "optimized": 4320.0,
+        "candidate_costs": {
+          "on_demand": 4320.0,
+          "reserved_1yr": 42048.0,
+          "reserved_3yr": 94608.0
+        },
+        "interrupt_rate": 0.12,
+        "reason": "Short job cannot amortize a new 365/1095-day commitment"
+      },
+      {
+        "job_id": "job-infer-rag",
+        "gpu_type": "A100",
+        "days": 30.0,
+        "old_tier": "reserved",
+        "tier": "on_demand",
+        "old_estimate": 2160.0,
+        "on_demand": 3866.3999999999996,
+        "optimized": 3866.3999999999996,
+        "candidate_costs": {
+          "on_demand": 3866.3999999999996,
+          "reserved_1yr": 36792.0,
+          "reserved_3yr": 78840.0
+        },
+        "interrupt_rate": 0.06,
+        "reason": "Short job cannot amortize a new 365/1095-day commitment"
+      },
+      {
+        "job_id": "job-infer-search",
+        "gpu_type": "L4",
+        "days": 30.0,
+        "old_tier": "reserved",
+        "tier": "on_demand",
+        "old_estimate": 972.0,
+        "on_demand": 1728.0,
+        "optimized": 1728.0,
+        "candidate_costs": {
+          "on_demand": 1728.0,
+          "reserved_1yr": 21024.0,
+          "reserved_3yr": 47304.0
+        },
+        "interrupt_rate": 0.08,
+        "reason": "Short job cannot amortize a new 365/1095-day commitment"
+      },
+      {
+        "job_id": "job-dev-sandbox",
+        "gpu_type": "A10G",
+        "days": 22.0,
+        "old_tier": "spot",
+        "tier": "spot",
+        "old_estimate": 148.544,
+        "on_demand": 352.0,
+        "optimized": 153.472,
+        "candidate_costs": {
+          "on_demand": 352.0,
+          "spot": 153.472,
+          "reserved_1yr": 14016.0,
+          "reserved_3yr": 31536.0
+        },
+        "interrupt_rate": 0.12,
+        "reason": "Choose least total cost including GPU-specific interruptions and checkpoint/rework"
+      },
+      {
+        "job_id": "job-batch-eval",
+        "gpu_type": "H100",
+        "days": 30.0,
+        "old_tier": "spot",
+        "tier": "spot",
+        "old_estimate": 142.425,
+        "on_demand": 225.0,
+        "optimized": 141.75,
+        "candidate_costs": {
+          "on_demand": 225.0,
+          "spot": 141.75,
+          "reserved_1yr": 17520.0,
+          "reserved_3yr": 36792.0
+        },
+        "interrupt_rate": 0.04,
+        "reason": "Choose least total cost including GPU-specific interruptions and checkpoint/rework"
+      }
+    ],
+    "actual_on_demand": 16539.4,
+    "actual_old_estimate": 9848.838999999998,
+    "actual_old_savings_pct": 40.45225945318454,
+    "actual_optimized": 14027.521999999999,
+    "actual_savings_pct": 15.187237747439465,
+    "carbon_jobs": [
+      {
+        "job_id": "job-train-llm",
+        "gpu_hours": 2240.0,
+        "wh": 1568000.0,
+        "before_g": 595840.0,
+        "after_g": 47040.0,
+        "saved_g": 548800.0
+      },
+      {
+        "job_id": "job-train-embed",
+        "gpu_hours": 200.0,
+        "wh": 80000.0,
+        "before_g": 30400.0,
+        "after_g": 2400.0,
+        "saved_g": 28000.0
+      },
+      {
+        "job_id": "job-finetune",
+        "gpu_hours": 36.0,
+        "wh": 25200.0,
+        "before_g": 9576.0,
+        "after_g": 756.0,
+        "saved_g": 8820.0
+      },
+      {
+        "job_id": "job-dev-sandbox",
+        "gpu_hours": 352.0,
+        "wh": 52800.0,
+        "before_g": 20064.0,
+        "after_g": 1584.0,
+        "saved_g": 18480.0
+      },
+      {
+        "job_id": "job-batch-eval",
+        "gpu_hours": 90.0,
+        "wh": 63000.0,
+        "before_g": 23940.0,
+        "after_g": 1890.0,
+        "saved_g": 22050.0
+      }
+    ],
+    "regions": [
+      {
+        "region": "us-east-1",
+        "usd_kwh": 0.12,
+        "g_kwh": 380,
+        "energy_usd": 214.67999999999998,
+        "carbon_g": 679820.0
+      },
+      {
+        "region": "us-west-2",
+        "usd_kwh": 0.07,
+        "g_kwh": 120,
+        "energy_usd": 125.23000000000002,
+        "carbon_g": 214680.0
+      },
+      {
+        "region": "europe-north1",
+        "usd_kwh": 0.09,
+        "g_kwh": 30,
+        "energy_usd": 161.01,
+        "carbon_g": 53670.0
+      },
+      {
+        "region": "europe-central2",
+        "usd_kwh": 0.18,
+        "g_kwh": 660,
+        "energy_usd": 322.02,
+        "carbon_g": 1180740.0
+      },
+      {
+        "region": "us-east-wa",
+        "usd_kwh": 0.055,
+        "g_kwh": 90,
+        "energy_usd": 98.395,
+        "carbon_g": 161010.0
+      }
+    ],
+    "cheapest_region": "us-east-wa",
+    "cleanest_region": "europe-north1",
+    "balanced_region": "us-east-wa",
+    "carbon_saved_g": 626150.0
+  },
+  "m4": {
+    "by_team": {
+      "rag": 1.7562822974999992,
+      "search": 2.517908249999997,
+      "eval": 1.8101829174999997,
+      "assistant": 2.815685129999998
+    },
+    "by_project": {
+      "doc-qa": 1.595323972499999,
+      "web-search": 2.292814797499997,
+      "nightly-eval": 1.6304734899999993,
+      "chat": 2.642586737499999,
+      "(untagged)": 0.7388595975000005
+    },
+    "total_daily": 8.900058594999981,
+    "export_rows": 2400,
+    "tag_coverage": 0.9179166666666667,
+    "chargeback_ready": true
+  },
+  "m5": {
+    "baseline_monthly": 27133.624830000004,
+    "optimized_monthly": 15352.831757850003,
+    "levers": {
+      "Inference (cascade/cache/batch)": 1199.2230721500023,
+      "Purchasing (spot/reserved)": 9742.17,
+      "Right-sizing (conditional)": 461.4,
+      "Idle shutdown (conditional)": 378.00000000000006
+    },
+    "total_savings_pct": 43.4,
+    "without_conditional_optimized": 16192.231757850002,
+    "adjustments": [
+      {
+        "gpu_id": "gpu-h100-4",
+        "assumed_job_id": "job-train-llm",
+        "current_gpu": "H100",
+        "proposed_gpu": "A100",
+        "tier": "spot",
+        "idle_savings": 0.0,
+        "rightsize_savings": 245.39999999999998
+      },
+      {
+        "gpu_id": "gpu-h100-5",
+        "assumed_job_id": "job-train-llm",
+        "current_gpu": "H100",
+        "proposed_gpu": "H100",
+        "tier": "spot",
+        "idle_savings": 378.00000000000006,
+        "rightsize_savings": 0.0
+      },
+      {
+        "gpu_id": "gpu-a10g-0",
+        "assumed_job_id": "job-infer-chat",
+        "current_gpu": "A10G",
+        "proposed_gpu": "L4",
+        "tier": "reserved",
+        "idle_savings": 0.0,
+        "rightsize_savings": 107.99999999999997
+      },
+      {
+        "gpu_id": "gpu-a10g-1",
+        "assumed_job_id": "job-infer-chat",
+        "current_gpu": "A10G",
+        "proposed_gpu": "L4",
+        "tier": "reserved",
+        "idle_savings": 0.0,
+        "rightsize_savings": 107.99999999999997
+      }
+    ]
+  }
+}

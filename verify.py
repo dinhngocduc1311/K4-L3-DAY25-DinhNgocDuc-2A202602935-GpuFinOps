@@ -22,6 +22,7 @@ def check(name, cond, detail=""):
 
 
 def main() -> int:
+    CHECKS.clear()
     generate.main()  # deterministic regenerate
 
     r1 = m1_efficiency_audit.run(verbose=False)

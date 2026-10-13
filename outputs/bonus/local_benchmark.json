@@ -1,0 +1,49 @@
+{
+  "status": "completed",
+  "model": "sshleifer/tiny-gpt2",
+  "device": "cpu",
+  "seed": 25,
+  "measured_at_utc": "2026-10-13T05:17:05.010477+00:00",
+  "requested_revision": "main",
+  "model_revision": "5f91d94bd9cd7190a9f3216ff93cd1dd95f2c7be",
+  "python": "3.11.9",
+  "torch": "2.14.1+cpu",
+  "transformers": "5.19.0",
+  "threads": 1,
+  "cpu_rate_usd_hr_assumption": 0.1,
+  "load_seconds": 2.132852000009734,
+  "warmup_runs": 1,
+  "input_tokens_per_request": 13,
+  "runs": [
+    {
+      "new_tokens": 64,
+      "seconds": 0.29591159999836236,
+      "tokens_per_second": 216.28080818850694,
+      "estimated_cost_usd": 8.219766666621176e-06,
+      "usd_per_million_output_tokens": 0.12843385416595587
+    },
+    {
+      "new_tokens": 64,
+      "seconds": 0.32130660000257194,
+      "tokens_per_second": 199.18669582102484,
+      "estimated_cost_usd": 8.925183333404778e-06,
+      "usd_per_million_output_tokens": 0.13945598958444966
+    },
+    {
+      "new_tokens": 64,
+      "seconds": 0.41902139998273924,
+      "tokens_per_second": 152.7368291992637,
+      "estimated_cost_usd": 1.1639483332853868e-05,
+      "usd_per_million_output_tokens": 0.18186692707584168
+    }
+  ],
+  "total_output_tokens": 192,
+  "total_generation_seconds": 1.0362395999836735,
+  "median_tokens_per_second": 199.18669582102484,
+  "tokens_per_second": 185.28533362653295,
+  "estimated_cost_usd": 2.878443333287982e-05,
+  "usd_per_million_output_tokens": 0.14991892360874906,
+  "simulation_small_output_usd_per_m": 0.4,
+  "simulation_m2_input_plus_output_usd_per_m": 1.181471750333562,
+  "scope": "Measured output-token CPU generation; rental rate assumed; excludes load/warmup/idle. Tiny model quality differs from production models; M2 counts both input and output."
+}

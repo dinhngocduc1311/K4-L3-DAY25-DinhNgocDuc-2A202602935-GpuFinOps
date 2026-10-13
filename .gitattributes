@@ -1,0 +1,2 @@
+# Keep the Prometheus text artifact valid when checking out on Windows.
+outputs/bonus/prometheus_metrics.txt text eol=lf

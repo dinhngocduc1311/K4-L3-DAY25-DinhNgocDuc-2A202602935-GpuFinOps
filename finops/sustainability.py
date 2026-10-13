@@ -8,8 +8,8 @@ from __future__ import annotations
 REGION_CARBON = {
     "us-east-1": 380,
     "us-west-2": 120,   # Oregon hydro
-    "europe-north1": 30,  # Norway
-    "europe-central2": 660,  # Poland (dirtiest)
+    "europe-north1": 30,  # illustrative low-carbon region
+    "europe-central2": 660,  # highest intensity in this illustrative catalog
     "us-east-wa": 90,
 }
 # Electricity price (USD / kWh) — illustrative.
@@ -21,11 +21,11 @@ REGION_PRICE_KWH = {
     "us-east-wa": 0.055,
 }
 
-REASONING_ENERGY_MULTIPLIER = 80.0  # deck: reasoning ~74-86x a small-model query
+REASONING_ENERGY_MULTIPLIER = 80.0  # illustrative energy assumption, not a billing multiplier
 
 
 def wh_per_query(total_tokens: int, wh_per_1k_tokens: float = 0.30, is_reasoning: bool = False) -> float:
-    """Energy for one query. Median Gemini prompt ~0.24 Wh; reasoning ~74-86x."""
+    """Modeled query energy: 0.30 Wh/1k tokens, with an assumed reasoning multiplier."""
     base = (total_tokens / 1000.0) * wh_per_1k_tokens
     return base * (REASONING_ENERGY_MULTIPLIER if is_reasoning else 1.0)
 

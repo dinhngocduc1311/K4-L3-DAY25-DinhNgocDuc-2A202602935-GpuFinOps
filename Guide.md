@@ -1,7 +1,10 @@
 # Hướng dẫn Hoàn thành Lab 25 — GPU FinOps Optimization
 
 > Hướng dẫn từng bước dành cho sinh viên thực hiện Lab 25.
-> Yêu cầu: Python 3.9+, không cần GPU, không cần cloud account, không cần API key.
+> Yêu cầu: Python 3.9+, không cần GPU/cloud/API key; đã kiểm tra trên Python 3.11.
+>
+> Bản hoàn thiện: **5/5 extension**, baseline trong `outputs/before/`, 15 tests gốc và 19 checks mở rộng.
+> Kết quả: [report.md](outputs/report.md), [writeup.md](outputs/writeup.md), [REQUIREMENTS.md](REQUIREMENTS.md).
 
 ---
 
@@ -55,7 +58,7 @@ Bạn là FinOps Engineer mới gia nhập **NimbusAI** — một startup LLM đ
 ### Bước 2.1 — Clone hoặc vào thư mục lab
 
 ```bash
-cd Day25-Track2-GPU-FinOps-Lab
+# Mở terminal tại thư mục gốc project (có requirements.txt)
 ```
 
 ### Bước 2.2 — Tạo virtual environment
@@ -179,10 +182,10 @@ python missions/m1_efficiency_audit.py
 ```
 == M1 Efficiency Audit ==
 GPU            type   util%    MFU    MBU  idle_h
-gpu-h100-4     H100    98.0  0.202  0.450       0
+gpu-h100-4     H100    98.2  0.194  0.207       0
 ...
-GPU-Util LIES (util>=90% but MFU<30%): ['gpu-h100-4']
-Idle waste (1 day): $125.00  ->  $3,750/month
+GPU-Util LIES (util>=90% but MFU<30%): ['gpu-h100-4', 'gpu-a10g-1']
+Idle waste (1 day): $20.00  ->  $600/month
 ```
 
 ### Bước 4.3 — Phân tích kết quả
@@ -229,11 +232,12 @@ python missions/m2_inference_levers.py
 **Kết quả mong đợi (mẫu):**
 ```
 == M2 Inference Cost Levers ==
-requests=2400  tokens=1,234,567
-baseline  : $45.23/day   $36.643/1M-token
-optimized : $12.81/day   $10.374/1M-token
-savings   : 71.7%  (cascade + caching + batch)
-discount stack (batch + 100% cache): 0.050 of naive
+requests=2400  tokens=7,533,027
+Baseline              : $48.8742/day  $6.4880/1M-token
+Cascade               : $11.4756/day  $1.5234/1M-token
++ Cache incl. writes  : $10.6946/day  $1.4197/1M-token
++ Batch               : $8.9001/day   $1.1815/1M-token
+savings: 81.8% (same tokens; cache write fees included)
 ```
 
 ### Bước 5.3 — Tính tay để kiểm tra hiểu biết
@@ -286,7 +290,9 @@ def recommend_tier(hours_per_day, interruptible, reserved_discount=0.45):
     return "on_demand"      # Còn lại
 ```
 
-**Điểm hòa vốn:** Để reserved có lợi hơn on-demand, cần utilization ≥ `1 - discount`. Với 45% discount → cần ≥ 55% = 13.2 giờ/ngày.
+Đoạn trên là policy cơ bản để giữ tương thích lab. Khi truyền `prices` và `job_days`, policy so tổng chi phí thực tế của on-demand/spot/reserved 1yr/3yr. Xem mục 10.
+
+**Điểm hòa vốn:** `1-discount` chỉ áp dụng khi xét đủ kỳ cam kết và giá cố định. Reserved tính 24h/ngày. Job ngắn cần tính cả ngày chưa dùng trong kỳ cam kết.
 
 ### Bước 6.2 — Chạy M3
 
@@ -299,10 +305,12 @@ python missions/m3_purchasing.py
 == M3 Purchasing Strategy ==
 break-even utilization @ 45% reserved discount = 55%
 job                gpu    tier        on-demand    optimized
-training-001       H100   spot          $15,000      $7,200
-inference-001      H100   reserved      $10,800      $5,940
+job-train-llm      H100   spot          $12,000.00   $7,560.00
+job-infer-chat     A10G   reserved       $4,320.00   $2,592.00
+job-infer-search   L4     reserved       $1,728.00   $1,296.00
 ...
-monthly: on-demand $45,000 -> optimized $25,200  (44.0% saved)
+monthly: on-demand $25,667 -> optimized $15,925 (38.0% saved)
+Actual-days total: $16,539.40 -> $14,027.52 (15.19% savings)
 ```
 
 ### Bước 6.3 — Tìm hiểu spot checkpoint simulation
@@ -314,7 +322,7 @@ result = spot_checkpoint_cost(
     job_hours=720,          # 30 ngày × 24h
     spot_hr=1.40,           # Giá spot H100
     on_demand_hr=2.50,      # Giá on-demand H100
-    interrupt_rate=0.05,    # 5% khả năng bị thu hồi mỗi giờ
+    interrupt_rate=0.05,    # giả định 0.05 interruption events / productive GPU-hour
     ckpt_overhead_frac=0.03 # 3% overhead để ghi checkpoint
 )
 print(result)
@@ -353,11 +361,12 @@ python missions/m4_allocation.py
 ```
 == M4 Cost Allocation ==
 cost by team ($/day):
-  ml-research    $    8.45
-  platform       $    3.12
-  product        $    1.24
+  assistant     $    2.82
+  search        $    2.52
+  eval          $    1.81
+  rag           $    1.76
 tag coverage: 92%  ->  chargeback ready? True
-FOCUS export -> outputs/focus_export.csv (50 rows)
+FOCUS export -> outputs/focus_export.csv (2400 rows)
 ```
 
 ### Bước 7.3 — Kiểm tra FOCUS export
@@ -366,7 +375,9 @@ FOCUS export -> outputs/focus_export.csv (50 rows)
 head -5 outputs/focus_export.csv
 ```
 
-**Cột của FOCUS:**
+Đây là **FOCUS-style export** phục vụ lab, chưa xác nhận tuân thủ toàn bộ schema FOCUS. Export đủ request, giữ precision để tổng `BilledCost` khớp M2/M4 (gồm cache writes).
+
+**Các cột xuất:**
 - `BillingAccountId` — tài khoản thanh toán
 - `ChargePeriodStart` — kỳ tính phí
 - `ServiceCategory` — loại dịch vụ (`AI and Machine Learning`)
@@ -393,8 +404,8 @@ M5 kết hợp 4 "đòn bẩy" tiết kiệm:
 |---|---|
 | Inference (cascade/cache/batch) | M2 |
 | Purchasing (spot/reserved) | M3 |
-| Right-size util-lies | M1 — hạ cấp GPU bị "lie" xuống tier thấp hơn |
-| Kill idle GPUs | M1 — tắt GPU chạy không, utilization < 10% |
+| Right-sizing (conditional) | M1 — kiểm tra VRAM/BW/compute, cần benchmark |
+| Idle shutdown (conditional) | M1 — util <10%, tính rate sau purchasing; reserved không giảm bill |
 
 ### Bước 8.2 — Chạy M5
 
@@ -405,12 +416,9 @@ python missions/m5_report.py
 **Kết quả mong đợi:**
 ```
 == M5 Optimization Report ==
-# NimbusAI — GPU Cost Optimization Report
-Baseline spend: $27,133
-Optimized spend: $14,626
-Projected savings: $12,507 (46%)
-...
-Written: outputs/report.md + outputs/savings.png
+Baseline $27,133.62 -> optimized $15,352.83; savings 43.42%
+Inference $6.487984 -> $1.181472/1M-token
+Written: outputs/report.md + outputs/writeup.md + outputs/after.json + outputs/savings.png
 ```
 
 ### Bước 8.3 — Đọc báo cáo đầu ra
@@ -419,19 +427,24 @@ Written: outputs/report.md + outputs/savings.png
 cat outputs/report.md
 ```
 
-Mở `outputs/savings.png` để xem biểu đồ waterfall — mỗi cột là một đòn bẩy tiết kiệm.
+Mở `outputs/savings.png`: baseline, bốn savings tuần tự, optimized. M5 tính idle trước right-sizing theo từng GPU để tránh cộng trùng. CSV không nối gpu_id với job_id: ánh xạ là giả định, cần xác minh runtime chứa idle và benchmark throughput. API M2 và GPU M3 chỉ được cộng nếu là hai khoản chi riêng.
+
+Kịch bản chính 30 ngày giả định pool reserved có thể tái sử dụng, savings là avoided capacity cost khi tái phân bổ/gia hạn. Bảng extension mua mới dùng days thực tế và tính toàn bộ kỳ cam kết.
 
 ### Bước 8.4 — Kiểm tra section Sustainability
 
-Báo cáo có phần:
+Báo cáo dùng năng lượng trung bình từ toàn bộ request, gồm reasoning:
 ```markdown
 ## Sustainability
-- Energy per query: 0.24 Wh
-- Carbon per query: 0.091 gCO2e
-- Cheapest+cleanest region: europe-north1
+- Energy per query: 13.20 Wh
+- Carbon per query: 5.015 gCO2e
+- Cleanest region: europe-north1
+- Cheapest electricity region: us-east-wa
+- Balanced region (equal normalized price/carbon weights): us-east-wa
 ```
 
-Vùng **europe-north1** (Na Uy) rẻ và sạch nhất do thủy điện. Vùng **europe-central2** (Ba Lan) có carbon 660 gCO2/kWh — dơ nhất. Chọn vùng triển khai đúng vừa tiết kiệm tiền, vừa giảm phát thải.
+Nhãn vùng, điện và carbon là dữ liệu minh họa trong catalog. Vùng sạch nhất không đồng nghĩa rẻ nhất.
+Cap reasoning 10% có savings bằng 0 vì traffic reasoning hiện tại chỉ 8.38%.
 
 ---
 
@@ -462,90 +475,111 @@ Phải đạt **11/11 checks passed**. Nếu fail ở check nào, đọc chi ti�
 ### Bước 9.3 — Chạy pytest
 
 ```bash
-pytest -q
+python -m pytest -q
 ```
 
 **Kết quả mong đợi:**
 ```
 ...............
-15 passed in 0.42s
+15 passed
 ```
 
-Nếu có test fail, đọc error message, tìm file test tương ứng trong `tests/` để hiểu assertion nào không thỏa.
+Nếu fail, đọc assertion và sửa code. `pytest.ini` mặc định chỉ thu thập 15 tests giảng viên trong `tests/`, giữ nguyên nội dung bộ gốc. Verify chạy lại M1–M5, nên đọc lại report, mở PNG và kiểm tra CSV sau verify; pass tests vẫn cần đủ bốn file nộp. 19 checks tự viết nằm trong `checks/` và chạy riêng:
+
+```bash
+python -m pytest -q tests   # 15 tests gốc
+python -m pytest -q checks/test_extensions.py # 19 checks FinOps
+python -m pytest -q checks/test_bonus.py      # 16 tests bonus
+python -m pytest -q tests checks  # 50 tests tổng cộng
+```
 
 ---
 
 ## 10. Phần mở rộng "Your Turn"
 
-Cần thực hiện **ít nhất 2 trong 5** phần mở rộng để đạt điểm 20% còn lại.
+Đề yêu cầu ít nhất hai; bản này triển khai và đo **cả năm**.
+Baseline lưu trước sửa cùng SHA-256 bốn CSV trong `outputs/before/baseline.json`.
+Kết quả mới: `outputs/after.json`; bảng định lượng/insight được sinh lại trong report và write-up.
 
 ### Extension 1 — Cải thiện `recommend_tier()`
 
-**File cần sửa:** `finops/pricing.py` — hàm `recommend_tier()`
+File: `finops/pricing.py`, `missions/m3_purchasing.py`.
 
 ```python
-# Thêm logic cân nhắc:
-# 1. Interruption rate khác nhau theo GPU type (H100 spot ít bị thu hồi hơn A10G)
-# 2. So sánh 3yr reserved vs 1yr reserved theo duration thực tế của job
-def recommend_tier(hours_per_day, interruptible, reserved_discount=0.45,
-                   gpu_type=None, job_days=None):
-    # TODO: viết lại logic tại đây
-    ...
+from missions._common import catalog_by_type
+from finops.pricing import recommend_tier
+cat = catalog_by_type()
+print(recommend_tier(24, False, gpu_type="H100", job_days=30, prices=cat["H100"]))
+# on_demand
+print(recommend_tier(24, False, gpu_type="H100", job_days=365, prices=cat["H100"]))
+# reserved_1yr
+print(recommend_tier(24, False, gpu_type="H100", job_days=1095, prices=cat["H100"]))
+# reserved_3yr
 ```
 
-**Đo lường:** Chạy lại M3, so sánh `savings_pct` trước và sau khi sửa.
+Interruption theo GPU type là giả định trong `INTERRUPTION_RATES`, không phải số thị trường.
+So spot có checkpoint/rework, on-demand và reserved tính đủ số kỳ 365/1095 ngày × 24h.
+Không giả định có job khác dùng capacity dư sau khi job kết thúc.
+Report có bảng job, chi phí tất cả candidate, tier cũ/mới, savings trước/sau và matrix.
+Kịch bản chính 30 ngày dùng pool reserved đã có; extension dùng days thực tế, mua cam kết mới.
+So policy trước/sau trên **cùng days**, không so tổng hai kỳ khác nhau.
 
 ### Extension 2 — Right-sizing theo MBU
 
-**File cần sửa:** `missions/m1_efficiency_audit.py`
+File: `missions/m1_efficiency_audit.py`.
 
-Trong M1, thêm logic: với các GPU memory-bound (MBU thấp), gợi ý GPU nào rẻ hơn có cùng MBU target.
+Giả định infer/embed memory-bound; MBU thấp chưa đủ kết luận roofline.
+Đọc max telemetry VRAM/BW/TFLOPs và catalog `hbm_gb`, `peak_bw_tbs`, `on_demand_hr`.
+Candidate cần max VRAM × 1.10; peak BW × 0.80 ≥ achieved max BW;
+peak TFLOPs × 0.80 ≥ achieved max TFLOPs. Trong nhóm đủ năng lực, decode/embed ưu tiên $/GB-h thấp,
+rồi giá/giờ; training util-lie là nhóm riêng, ưu tiên giá/giờ sau khi kiểm tra năng lực.
 
-```python
-# Tính $/GB-VRAM cho từng GPU type
-# So sánh peak_bw_tbs để tìm GPU phù hợp hơn cho inference
-```
+Report ghi GPU hiện tại → GPU đề xuất → lý do → USD/30 ngày.
+A100 cần hơn 73 GB sau headroom nên giữ A100; A10G → L4 là ứng viên, saving 144 USD/GPU/30 ngày on-demand.
+Training util-lie là nhóm sàng lọc riêng. Chưa có benchmark throughput hoặc tương thích phần mềm.
+Không cộng thẳng savings on-demand của M1 vào waterfall đã giảm giá purchasing.
 
 ### Extension 3 — `cache_is_worth_it()`
 
-**File cần tạo hoặc sửa:** `finops/pricing.py`
+File: `finops/pricing.py`, `missions/m2_inference_levers.py`; M4 dùng cùng `price_requests()`.
 
 ```python
-def cache_is_worth_it(
-    avg_cache_reads: float,     # Lần đọc lại trung bình mỗi cached prefix
-    write_cost_per_m: float,    # Chi phí ghi cache (Gemini tính tiền lưu trữ)
-    read_discount: float = 0.10 # 10% = 90% off
-) -> bool:
-    """Cache chỉ tiết kiệm tiền khi tổng tiết kiệm từ đọc > chi phí ghi."""
-    # Break-even: đủ số lần đọc để bù chi phí ghi
-    ...
+from finops.pricing import cache_break_even_reads, cache_is_worth_it
+print(cache_break_even_reads(0.25, 0.20))  # 1.3889 reads/write
+print(cache_is_worth_it(1, 0.25, price_in_per_m=0.20))  # False
+print(cache_is_worth_it(4, 0.25, price_in_per_m=0.20))  # True
 ```
+
+Write/input prices cùng USD/1M token. CSV không có prefix IDs/reads: dùng giả định 4 reads/write,
+additional write fee = 1.25 × input price ngoài ordinary input cost và không hưởng batch discount.
+Hòa vốn sync 1.389 reads, batch 2.778 reads cho cả hai tier vì giả định phí ghi tỷ lệ với input price.
+Chạy các case 0.5/1/4/20 reads, ghi cost và $/1M-token; không gọi reads giả định là dữ liệu quan sát.
 
 ### Extension 4 — Ngân sách Reasoning
 
-**File cần sửa:** `missions/m2_inference_levers.py` và `missions/m5_report.py`
+File: `missions/m2_inference_levers.py`, `missions/m5_report.py`.
 
-```python
-# Trong token_usage.csv có cột is_reasoning
-# Tính riêng chi phí $ và Wh cho is_reasoning=1
-# So sánh với is_reasoning=0 cùng số token
-# Đề xuất: giới hạn reasoning chỉ khi confidence score < threshold
-```
+Tách is_reasoning=0/1: request/token/USD/Wh và tỷ trọng.
+Dùng `wh_per_query()`; 80× là multiplier năng lượng, không nhân giá tiền thêm lần nữa.
+Cap 10% giữ tokens/model; khi overflow chỉ bỏ multiplier, ưu tiên output dài nhất làm proxy độ phức tạp.
+CSV không có confidence/complexity scores; cần kiểm định chất lượng trước routing thật.
 
-Dùng `finops.sustainability.wh_per_query(tokens, is_reasoning=True)` — tiêu thụ năng lượng gấp ~80× query thông thường.
+Seed=25: 201/2.400 reasoning request (8.38%), 94.04% năng lượng theo mô hình.
+Dưới cap nên savings USD/Wh bằng **0**. Checks có case giả định vượt cap, xác minh cost/token giữ nguyên.
 
 ### Extension 5 — Carbon-aware Scheduling
 
-**File cần sửa:** `missions/m3_purchasing.py` hoặc tạo file mới
+File: `missions/m3_purchasing.py`, `finops/sustainability.py`.
 
-```python
-from finops.sustainability import REGION_CARBON, carbon_g, wh_per_query
+Chỉ interruptible=1, dùng **days thực tế**. Wh = catalog watts × productive GPU-hours.
+Giữ cùng workload ở mọi vùng; chưa cộng PUE/CPU/network/checkpoint overhead.
+Bảng report có carbon từng job, năm vùng USD/kWh, gCO2e/kWh, tiền điện và carbon.
 
-# Với mỗi job interruptible=1 trong workloads.csv:
-# 1. Tính carbon hiện tại (giả sử chạy ở us-east-1)
-# 2. Tính carbon nếu chạy ở vùng sạch nhất (europe-north1)
-# 3. Báo cáo: gCO2e tiết kiệm được và % giảm
-```
+Tổng 1.789.000 Wh: carbon 679.820 → 53.670 gCO2e, giảm **626.150 gCO2e (92.11%)**.
+Điện us-east-1 214.68 USD, cleanest europe-north1 161.01 USD, cheapest us-east-wa 98.39 USD.
+Balanced theo tổng price/max price + carbon/max carbon, trọng số bằng nhau: us-east-wa.
+Giá điện chỉ để so sánh, không cộng lại vào GPU rental; nhãn vùng là minh họa, chưa xác nhận provider/GPU availability.
+Chưa có carbon theo giờ; cân nhắc latency, data residency và GPU availability.
 
 ---
 
@@ -555,9 +589,10 @@ from finops.sustainability import REGION_CARBON, carbon_g, wh_per_query
 
 ```
 [ ] python verify.py  →  11/11 checks passed
-[ ] pytest -q         →  15 passed
+[ ] pytest -q → 15 passed (tests gốc, giữ nguyên)
+[ ] pytest -q tests checks → 50 passed (15 gốc + 19 mở rộng + 16 bonus)
 [ ] outputs/report.md tồn tại và có đủ các section
-[ ] outputs/savings.png tồn tại (nếu matplotlib hoạt động)
+[ ] outputs/savings.png tồn tại và đọc được; matplotlib cần để nộp đủ artifact
 [ ] outputs/focus_export.csv tồn tại
 [ ] Đã thực hiện ≥2 extension với kết quả đo lường
 ```
@@ -578,8 +613,11 @@ Viết 1–2 trang (không có template cứng) trả lời:
 outputs/report.md
 outputs/savings.png
 outputs/focus_export.csv
-[bài viết ngắn — .md hoặc .pdf]
+outputs/writeup.md
 ```
+
+Có thể kèm `outputs/after.json`, `outputs/before/` và `outputs/validation.txt` làm bằng chứng trước/sau;
+bốn file trong danh sách trên là các file nộp bắt buộc.
 
 ---
 
@@ -612,7 +650,7 @@ Hàm `flag_util_lies()` cần:
 
 ### Lỗi: matplotlib không tạo được PNG
 
-Lab vẫn pass nếu không có matplotlib (PNG bị bỏ qua). Kiểm tra `pip show matplotlib` và cài lại nếu cần.
+Verify cơ bản có thể pass nếu thiếu PNG, nhưng bài nộp và checks mở rộng yêu cầu PNG. Kiểm tra `python -m pip show matplotlib` và cài dependencies để tạo đủ artifact.
 
 ### Warnings về `is_batch` type
 
@@ -622,3 +660,24 @@ is_batch = bool(int(num(r["is_batch"])))   # Không phải bool(r["is_batch"]) t
 ```
 
 ---
+
+## 13. Bonus hoàn thiện (không chấm điểm)
+
+Cả ba bonus có code chạy được và evidence riêng tại [outputs/bonus/report.md](outputs/bonus/report.md).
+Đọc [tracker](bonus/litellm_tracker/README.md), [CPU benchmark](bonus/local_model/README.md),
+[Docker observability](bonus/docker/README.md). Model/library là dependencies tùy chọn;
+graded requirements giữ nhẹ, không cần model/GPU/Docker.
+
+```bash
+python bonus/litellm_tracker/demo.py
+python -m pip install -r bonus/local_model/requirements.txt
+python bonus/local_model/run_local.py --strict
+docker compose -f bonus/docker/docker-compose.yml up -d --wait --wait-timeout 90
+python bonus/verify.py --docker --model
+pytest -q checks/test_bonus.py # 16 bonus tests
+```
+
+CPU benchmark dùng warm-up và nhiều lần đo, output-only cost, ghi rõ giá CPU giả định.
+Exporter có MFU/MBU/util/power/cost/idle, health endpoint và datasource dashboard được provisioning.
+Theo dõi [validation bonus](outputs/bonus/validation.json); không gọi skipped là đã benchmark thành công.
+Dừng stack với `docker compose -f bonus/docker/docker-compose.yml down`.

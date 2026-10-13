@@ -1,12 +1,365 @@
 {
-  "title": "Lab 25 — GPU Cost & Efficiency",
+  "uid": "lab25-gpu-cost",
+  "title": "GPU Cost & Efficiency",
+  "description": "Historical synthetic telemetry, not live GPU activity or guaranteed savings",
   "schemaVersion": 39,
+  "version": 1,
+  "tags": [
+    "lab25",
+    "finops"
+  ],
+  "refresh": "10s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timezone": "browser",
   "panels": [
-    {"type": "timeseries", "title": "GPU-Util % (the 'busy' clock)", "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
-     "targets": [{"expr": "gpu_util_pct"}]},
-    {"type": "timeseries", "title": "MFU (real efficiency)", "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
-     "targets": [{"expr": "gpu_mfu"}]},
-    {"type": "bargauge", "title": "Wasted $/hr (paid FLOPs not used)", "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8},
-     "targets": [{"expr": "gpu_wasted_cost_usd_per_hr"}]}
+    {
+      "id": 1,
+      "type": "text",
+      "title": "Synthetic snapshot: interpreting the metrics",
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "This replays the historical seed-25 CSV snapshot, not live DCGM metrics. Util is time-active; use MFU for compute and MBU for decode. **(1 − MFU) × price is unused compute-capacity value, not refundable savings.** Idle cost covers the observed 24h at on-demand rates. See outputs/report.md for sequential savings and benchmark limits."
+      }
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "GPU-Util % (busy time)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lab25-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "gpu_util_pct",
+          "legendFormat": "{{gpu_id}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lab25-prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "MFU (compute efficiency)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 4
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lab25-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "gpu_mfu",
+          "legendFormat": "{{gpu_id}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lab25-prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "MBU (bandwidth efficiency)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lab25-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "gpu_mbu",
+          "legendFormat": "{{gpu_id}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lab25-prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "max": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Power (synthetic observed mean)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lab25-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "gpu_power_watts",
+          "legendFormat": "{{gpu_id}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lab25-prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": "bargauge",
+      "title": "On-demand rate (USD/GPU-hour)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 20
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lab25-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "gpu_hourly_cost_usd",
+          "legendFormat": "{{gpu_id}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lab25-prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        }
+      }
+    },
+    {
+      "id": 7,
+      "type": "bargauge",
+      "title": "Unused compute capacity (diagnostic USD/hour)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 20
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lab25-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "gpu_wasted_cost_usd_per_hr",
+          "legendFormat": "{{gpu_id}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lab25-prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        }
+      }
+    },
+    {
+      "id": 8,
+      "type": "bargauge",
+      "title": "Idle duration in observed snapshot",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 28
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lab25-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "gpu_idle_seconds",
+          "legendFormat": "{{gpu_id}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lab25-prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": "bargauge",
+      "title": "Idle cost in observed snapshot (USD)",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 28
+      },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "lab25-prometheus"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "gpu_idle_cost_usd",
+          "legendFormat": "{{gpu_id}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "lab25-prometheus"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "min": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "values": false
+        }
+      }
+    }
   ]
 }

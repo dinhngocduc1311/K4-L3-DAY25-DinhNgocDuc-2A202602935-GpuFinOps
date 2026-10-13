@@ -1,0 +1,38 @@
+{
+  "tracker": {
+    "backend": "mock",
+    "period": "process session",
+    "blocked": true,
+    "requests_logged": 15,
+    "budgets_usd": {
+      "team-chat": 0.05,
+      "team-eval": 100.0
+    },
+    "spend_usd": {
+      "team-chat": 0.04604999999999999,
+      "team-eval": 0.0002595
+    }
+  },
+  "verified_at_utc": "2026-10-13T05:42:57.209298+00:00",
+  "exporter": {
+    "status": "completed",
+    "metric_families": 8,
+    "gpu_series_per_family": 11
+  },
+  "docker": {
+    "status": "completed",
+    "exporter_target": "up",
+    "mfu_series": 11,
+    "idle_cost_usd_snapshot": 20,
+    "dashboard_uid": "lab25-gpu-cost",
+    "panels": 9,
+    "datasource_uid": "lab25-prometheus"
+  },
+  "model": {
+    "status": "completed",
+    "model": "sshleifer/tiny-gpt2",
+    "output_tokens": 192,
+    "tokens_per_second": 185.28533362653295,
+    "estimated_usd_per_million_output_tokens": 0.14991892360874906
+  }
+}

@@ -1,0 +1,104 @@
+# HELP gpu_util_pct Time-active utilization, mean of the historical snapshot (0..100)
+# TYPE gpu_util_pct gauge
+# HELP gpu_mfu Model FLOPs utilization, historical mean (0..1)
+# TYPE gpu_mfu gauge
+# HELP gpu_mbu Model bandwidth utilization, historical mean (0..1)
+# TYPE gpu_mbu gauge
+# HELP gpu_power_watts Measured synthetic GPU power, historical mean watts
+# TYPE gpu_power_watts gauge
+# HELP gpu_hourly_cost_usd Catalog on-demand USD per GPU-hour
+# TYPE gpu_hourly_cost_usd gauge
+# HELP gpu_wasted_cost_usd_per_hr Unused compute-capacity diagnostic (1-MFU)*rate; not realizable savings
+# TYPE gpu_wasted_cost_usd_per_hr gauge
+# HELP gpu_idle_seconds Idle duration in the observed snapshot, GPU utilization below 10 percent
+# TYPE gpu_idle_seconds gauge
+# HELP gpu_idle_cost_usd On-demand idle cost over the observed snapshot, not an additional lever
+# TYPE gpu_idle_cost_usd gauge
+gpu_util_pct{gpu_id="gpu-a100-0",gpu_type="A100"} 31.395833
+gpu_mfu{gpu_id="gpu-a100-0",gpu_type="A100"} 0.25918803
+gpu_mbu{gpu_id="gpu-a100-0",gpu_type="A100"} 0.27625
+gpu_power_watts{gpu_id="gpu-a100-0",gpu_type="A100"} 262.79167
+gpu_hourly_cost_usd{gpu_id="gpu-a100-0",gpu_type="A100"} 1.79
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-a100-0",gpu_type="A100"} 1.3260534
+gpu_idle_seconds{gpu_id="gpu-a100-0",gpu_type="A100"} 0
+gpu_idle_cost_usd{gpu_id="gpu-a100-0",gpu_type="A100"} 0
+gpu_util_pct{gpu_id="gpu-a100-1",gpu_type="A100"} 27.970833
+gpu_mfu{gpu_id="gpu-a100-1",gpu_type="A100"} 0.23563034
+gpu_mbu{gpu_id="gpu-a100-1",gpu_type="A100"} 0.24739583
+gpu_power_watts{gpu_id="gpu-a100-1",gpu_type="A100"} 256
+gpu_hourly_cost_usd{gpu_id="gpu-a100-1",gpu_type="A100"} 1.79
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-a100-1",gpu_type="A100"} 1.3682217
+gpu_idle_seconds{gpu_id="gpu-a100-1",gpu_type="A100"} 0
+gpu_idle_cost_usd{gpu_id="gpu-a100-1",gpu_type="A100"} 0
+gpu_util_pct{gpu_id="gpu-a10g-0",gpu_type="A10G"} 24.954167
+gpu_mfu{gpu_id="gpu-a10g-0",gpu_type="A10G"} 0.2185
+gpu_mbu{gpu_id="gpu-a10g-0",gpu_type="A10G"} 0.23486111
+gpu_power_watts{gpu_id="gpu-a10g-0",gpu_type="A10G"} 93.791667
+gpu_hourly_cost_usd{gpu_id="gpu-a10g-0",gpu_type="A10G"} 1
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-a10g-0",gpu_type="A10G"} 0.7815
+gpu_idle_seconds{gpu_id="gpu-a10g-0",gpu_type="A10G"} 0
+gpu_idle_cost_usd{gpu_id="gpu-a10g-0",gpu_type="A10G"} 0
+gpu_util_pct{gpu_id="gpu-a10g-1",gpu_type="A10G"} 96.9375
+gpu_mfu{gpu_id="gpu-a10g-1",gpu_type="A10G"} 0.2678
+gpu_mbu{gpu_id="gpu-a10g-1",gpu_type="A10G"} 0.30180556
+gpu_power_watts{gpu_id="gpu-a10g-1",gpu_type="A10G"} 147.70833
+gpu_hourly_cost_usd{gpu_id="gpu-a10g-1",gpu_type="A10G"} 1
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-a10g-1",gpu_type="A10G"} 0.7322
+gpu_idle_seconds{gpu_id="gpu-a10g-1",gpu_type="A10G"} 0
+gpu_idle_cost_usd{gpu_id="gpu-a10g-1",gpu_type="A10G"} 0
+gpu_util_pct{gpu_id="gpu-h100-0",gpu_type="H100"} 94.425
+gpu_mfu{gpu_id="gpu-h100-0",gpu_type="H100"} 0.41700758
+gpu_mbu{gpu_id="gpu-h100-0",gpu_type="H100"} 0.4461194
+gpu_power_watts{gpu_id="gpu-h100-0",gpu_type="H100"} 680.54167
+gpu_hourly_cost_usd{gpu_id="gpu-h100-0",gpu_type="H100"} 2.5
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-h100-0",gpu_type="H100"} 1.4574811
+gpu_idle_seconds{gpu_id="gpu-h100-0",gpu_type="H100"} 0
+gpu_idle_cost_usd{gpu_id="gpu-h100-0",gpu_type="H100"} 0
+gpu_util_pct{gpu_id="gpu-h100-1",gpu_type="H100"} 95.229167
+gpu_mfu{gpu_id="gpu-h100-1",gpu_type="H100"} 0.40838384
+gpu_mbu{gpu_id="gpu-h100-1",gpu_type="H100"} 0.43976368
+gpu_power_watts{gpu_id="gpu-h100-1",gpu_type="H100"} 683.375
+gpu_hourly_cost_usd{gpu_id="gpu-h100-1",gpu_type="H100"} 2.5
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-h100-1",gpu_type="H100"} 1.4790404
+gpu_idle_seconds{gpu_id="gpu-h100-1",gpu_type="H100"} 0
+gpu_idle_cost_usd{gpu_id="gpu-h100-1",gpu_type="H100"} 0
+gpu_util_pct{gpu_id="gpu-h100-2",gpu_type="H100"} 94.333333
+gpu_mfu{gpu_id="gpu-h100-2",gpu_type="H100"} 0.40106902
+gpu_mbu{gpu_id="gpu-h100-2",gpu_type="H100"} 0.42317164
+gpu_power_watts{gpu_id="gpu-h100-2",gpu_type="H100"} 680.125
+gpu_hourly_cost_usd{gpu_id="gpu-h100-2",gpu_type="H100"} 2.5
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-h100-2",gpu_type="H100"} 1.4973274
+gpu_idle_seconds{gpu_id="gpu-h100-2",gpu_type="H100"} 0
+gpu_idle_cost_usd{gpu_id="gpu-h100-2",gpu_type="H100"} 0
+gpu_util_pct{gpu_id="gpu-h100-3",gpu_type="H100"} 93.133333
+gpu_mfu{gpu_id="gpu-h100-3",gpu_type="H100"} 0.42732744
+gpu_mbu{gpu_id="gpu-h100-3",gpu_type="H100"} 0.44356965
+gpu_power_watts{gpu_id="gpu-h100-3",gpu_type="H100"} 675.91667
+gpu_hourly_cost_usd{gpu_id="gpu-h100-3",gpu_type="H100"} 2.5
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-h100-3",gpu_type="H100"} 1.4316814
+gpu_idle_seconds{gpu_id="gpu-h100-3",gpu_type="H100"} 0
+gpu_idle_cost_usd{gpu_id="gpu-h100-3",gpu_type="H100"} 0
+gpu_util_pct{gpu_id="gpu-h100-4",gpu_type="H100"} 98.158333
+gpu_mfu{gpu_id="gpu-h100-4",gpu_type="H100"} 0.19428872
+gpu_mbu{gpu_id="gpu-h100-4",gpu_type="H100"} 0.20656716
+gpu_power_watts{gpu_id="gpu-h100-4",gpu_type="H100"} 693.5
+gpu_hourly_cost_usd{gpu_id="gpu-h100-4",gpu_type="H100"} 2.5
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-h100-4",gpu_type="H100"} 2.0142782
+gpu_idle_seconds{gpu_id="gpu-h100-4",gpu_type="H100"} 0
+gpu_idle_cost_usd{gpu_id="gpu-h100-4",gpu_type="H100"} 0
+gpu_util_pct{gpu_id="gpu-h100-5",gpu_type="H100"} 61.0625
+gpu_mfu{gpu_id="gpu-h100-5",gpu_type="H100"} 0.26118266
+gpu_mbu{gpu_id="gpu-h100-5",gpu_type="H100"} 0.27097015
+gpu_power_watts{gpu_id="gpu-h100-5",gpu_type="H100"} 478.29167
+gpu_hourly_cost_usd{gpu_id="gpu-h100-5",gpu_type="H100"} 2.5
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-h100-5",gpu_type="H100"} 1.8470434
+gpu_idle_seconds{gpu_id="gpu-h100-5",gpu_type="H100"} 28800
+gpu_idle_cost_usd{gpu_id="gpu-h100-5",gpu_type="H100"} 20
+gpu_util_pct{gpu_id="gpu-l4-0",gpu_type="L4"} 40
+gpu_mfu{gpu_id="gpu-l4-0",gpu_type="L4"} 0.30206612
+gpu_mbu{gpu_id="gpu-l4-0",gpu_type="L4"} 0.32805556
+gpu_power_watts{gpu_id="gpu-l4-0",gpu_type="L4"} 50.416667
+gpu_hourly_cost_usd{gpu_id="gpu-l4-0",gpu_type="L4"} 0.8
+gpu_wasted_cost_usd_per_hr{gpu_id="gpu-l4-0",gpu_type="L4"} 0.55834711
+gpu_idle_seconds{gpu_id="gpu-l4-0",gpu_type="L4"} 0
+gpu_idle_cost_usd{gpu_id="gpu-l4-0",gpu_type="L4"} 0
